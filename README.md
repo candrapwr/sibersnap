@@ -1,0 +1,240 @@
+# SiberSnap
+
+SiberSnap is a Node.js API for capturing full-page website screenshots and extracting text content from web pages. It is built with TypeScript, Express, Puppeteer, Cheerio, and Sharp.
+
+## Features
+
+- Full-page website screenshots
+- PNG file responses by default
+- Optional JSON responses with Base64-encoded images
+- Optional WebP image compression with configurable quality
+- Lightweight scraping with Fetch and Cheerio
+- Automatic Puppeteer fallback for dynamic or protected pages
+- Dynamic content, font, image, and network-idle handling
+- Bot-detection evasion using `puppeteer-extra` and the stealth plugin
+- Optional internal-link extraction
+- External, duplicate, invalid, and fragment-only links are excluded
+- Request validation with Zod
+
+## Requirements
+
+- Node.js 20 or newer
+- npm
+- A system capable of running Chromium
+
+## Installation
+
+```bash
+git clone <repository-url>
+cd sibersnap
+npm install
+cp .env.example .env
+```
+
+## Configuration
+
+```env
+PORT=3000
+NODE_ENV=development
+REQUEST_TIMEOUT_MS=90000
+PUPPETEER_HEADLESS=true
+```
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `3000` | HTTP server port |
+| `NODE_ENV` | `development` | Application environment |
+| `REQUEST_TIMEOUT_MS` | `90000` | Page navigation and loading timeout |
+| `PUPPETEER_HEADLESS` | `true` | Run Chromium without a visible window |
+
+## Running the Project
+
+Development:
+
+```bash
+npm run dev
+```
+
+Production:
+
+```bash
+npm run build
+npm start
+```
+
+Type checking:
+
+```bash
+npm run typecheck
+```
+
+The API is available at `http://localhost:3000` by default.
+
+## API Endpoints
+
+### Health Check
+
+```http
+GET /health
+```
+
+Response:
+
+```json
+{
+  "status": "ok",
+  "service": "SiberSnap"
+}
+```
+
+### Full-Page Screenshot
+
+```http
+POST /api/screenshot
+Content-Type: application/json
+```
+
+Request parameters:
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `url` | string | required | HTTP or HTTPS page URL |
+| `json` | boolean | `false` | Return JSON with Base64 instead of an image file |
+| `compress` | boolean | `false` | Convert the image to compressed WebP |
+| `quality` | integer | `75` | WebP quality from `1` to `100` |
+
+PNG file response:
+
+```json
+{
+  "url": "https://example.com"
+}
+```
+
+Compressed WebP file response:
+
+```json
+{
+  "url": "https://example.com",
+  "compress": true,
+  "quality": 75
+}
+```
+
+JSON Base64 response:
+
+```json
+{
+  "url": "https://example.com",
+  "json": true,
+  "compress": true,
+  "quality": 75
+}
+```
+
+Example response:
+
+```json
+{
+  "url": "https://example.com",
+  "mimeType": "image/webp",
+  "encoding": "base64",
+  "compressed": true,
+  "quality": 75,
+  "size": 7682,
+  "image": "UklGR..."
+}
+```
+
+### Web Scraping
+
+```http
+POST /api/scrape
+Content-Type: application/json
+```
+
+Request parameters:
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `url` | string | required | HTTP or HTTPS page URL |
+| `includeLink` | boolean | `false` | Include links from the same hostname |
+
+Request:
+
+```json
+{
+  "url": "https://example.com",
+  "includeLink": true
+}
+```
+
+Example response:
+
+```json
+{
+  "url": "https://example.com/",
+  "engine": "light",
+  "title": "Example Domain",
+  "description": "",
+  "headings": [
+    "Example Domain"
+  ],
+  "text": "Example Domain This domain is for use in illustrative examples.",
+  "links": [
+    {
+      "text": "Documentation",
+      "href": "https://example.com/docs"
+    }
+  ]
+}
+```
+
+The scraper first uses Fetch and Cheerio for lower resource usage. If the page requires JavaScript, returns insufficient content, or appears to contain an anti-bot challenge, SiberSnap retries the request using Puppeteer.
+
+When `includeLink` is enabled:
+
+- Only HTTP and HTTPS links from the same hostname are returned.
+- `www.example.com` and `example.com` are treated as the same hostname.
+- URL fragments such as `#section` are removed.
+- Duplicate, external, invalid, `mailto:`, `tel:`, and `javascript:` links are excluded.
+
+## Postman
+
+Import `SiberSnap.postman_collection.json` into Postman. The collection includes requests for:
+
+- Health checks
+- Web scraping
+- Screenshot file responses
+- Screenshot JSON and Base64 responses
+
+The default `baseUrl` collection variable is:
+
+```text
+http://localhost:3000
+```
+
+## Project Structure
+
+```text
+src/
+|-- app.ts
+|-- config.ts
+|-- server.ts
+|-- services/
+|   `-- puppeteer.service.ts
+`-- validators/
+    `-- request.validator.ts
+```
+
+## Responsible Use
+
+Use SiberSnap only on websites you are authorized to access and scrape. Follow applicable laws, website terms, robots policies, rate limits, privacy requirements, and copyright restrictions.
+
+## License
+
+SiberSnap is licensed under the MIT License.
+
+Copyright (c) 2026 dataSiberLab
+
+Contact: candrapwr@datasiber.com

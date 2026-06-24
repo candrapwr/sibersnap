@@ -273,6 +273,7 @@ async function withPage<T>(url: string, callback: (page: Page) => Promise<T>): P
 async function launchBrowser() {
   return puppeteer.launch({
     headless: config.puppeteerHeadless,
+    dumpio: config.puppeteerDebug,
     defaultViewport: null,
     args: [
       "--no-sandbox",

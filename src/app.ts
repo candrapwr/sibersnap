@@ -66,9 +66,20 @@ export function createApp() {
     }
   });
 
-  const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+  const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
     const status = typeof error?.status === "number" ? error.status : 500;
     const message = error?.issues ? "Invalid request payload" : error?.message || "Internal server error";
+
+    console.error({
+      timestamp: new Date().toISOString(),
+      method: req.method,
+      path: req.originalUrl,
+      targetUrl: typeof req.body?.url === "string" ? req.body.url : undefined,
+      status,
+      message,
+      stack: error instanceof Error ? error.stack : undefined,
+      details: error?.issues ?? undefined
+    });
 
     res.status(status).json({
       error: message,

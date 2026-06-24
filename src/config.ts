@@ -14,5 +14,6 @@ function numberFromEnv(value: string | undefined, fallback: number) {
 export const config = {
   port: numberFromEnv(process.env.PORT, 3000),
   requestTimeoutMs: numberFromEnv(process.env.REQUEST_TIMEOUT_MS, 90000),
-  puppeteerHeadless: booleanFromEnv(process.env.PUPPETEER_HEADLESS, true)
+  puppeteerHeadless: booleanFromEnv(process.env.PUPPETEER_HEADLESS, true),
+  puppeteerDebug: booleanFromEnv(process.env.PUPPETEER_DEBUG, false)
 };

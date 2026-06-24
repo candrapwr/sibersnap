@@ -38,6 +38,7 @@ PORT=3000
 NODE_ENV=development
 REQUEST_TIMEOUT_MS=90000
 PUPPETEER_HEADLESS=true
+PUPPETEER_DEBUG=false
 ```
 
 | Variable | Default | Description |
@@ -46,6 +47,7 @@ PUPPETEER_HEADLESS=true
 | `NODE_ENV` | `development` | Application environment |
 | `REQUEST_TIMEOUT_MS` | `90000` | Page navigation and loading timeout |
 | `PUPPETEER_HEADLESS` | `true` | Run Chromium without a visible window |
+| `PUPPETEER_DEBUG` | `false` | Forward Chromium process output to server logs |
 
 ## Running the Project
 
@@ -69,6 +71,54 @@ npm run typecheck
 ```
 
 The API is available at `http://localhost:3000` by default.
+
+## Ubuntu Screenshot Troubleshooting
+
+Enable detailed Chromium output in `.env`:
+
+```env
+NODE_ENV=production
+PUPPETEER_HEADLESS=true
+PUPPETEER_DEBUG=true
+```
+
+Rebuild and restart the application:
+
+```bash
+npm run build
+npm start
+```
+
+View logs based on the process manager:
+
+```bash
+pm2 logs sibersnap --lines 200
+```
+
+```bash
+journalctl -u sibersnap -n 200 -f
+```
+
+```bash
+docker logs --tail 200 -f <container-name>
+```
+
+Install the Puppeteer browser and required Ubuntu system dependencies:
+
+```bash
+sudo npx puppeteer browsers install chrome --install-deps
+```
+
+Test the screenshot endpoint directly and save both headers and response:
+
+```bash
+curl -v \
+  -X POST http://127.0.0.1:3000/api/screenshot \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com","json":true}'
+```
+
+Set `PUPPETEER_DEBUG=false` again after troubleshooting to reduce production log volume.
 
 ## API Endpoints
 

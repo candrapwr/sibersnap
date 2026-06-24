@@ -13,6 +13,24 @@ export function createApp() {
   app.use(cors());
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("combined"));
+  app.use((req, res, next) => {
+    const startedAt = Date.now();
+
+    res.on("close", () => {
+      if (!res.writableEnded) {
+        console.error({
+          timestamp: new Date().toISOString(),
+          method: req.method,
+          path: req.originalUrl,
+          targetUrl: typeof req.body?.url === "string" ? req.body.url : undefined,
+          message: "Client connection closed before the response completed",
+          durationMs: Date.now() - startedAt
+        });
+      }
+    });
+
+    next();
+  });
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok", service: "SiberSnap" });

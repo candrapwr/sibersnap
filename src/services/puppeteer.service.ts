@@ -279,6 +279,8 @@ async function launchBrowser() {
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-background-networking",
       "--disable-blink-features=AutomationControlled",
       "--disable-features=IsolateOrigins,site-per-process",
       "--window-size=1366,768",
@@ -320,13 +322,13 @@ async function configureNaturalPage(page: Page) {
 async function waitForPageSettled(page: Page) {
   await page.waitForNetworkIdle({
     idleTime: 1000,
-    timeout: config.requestTimeoutMs
+    timeout: Math.min(config.requestTimeoutMs, 10000)
   }).catch(() => undefined);
 
-  await delay(1500);
+  await delay(1000);
   await autoScroll(page);
   await waitForFontsAndImages(page);
-  await delay(800);
+  await delay(500);
 }
 
 async function preparePageForCapture(page: Page) {
@@ -345,13 +347,18 @@ async function autoScroll(page: Page) {
   await page.evaluate(`(async () => {
     await new Promise((resolve) => {
       let totalHeight = 0;
+      let steps = 0;
       const distance = 350;
-      const maxHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+      const maxSteps = 100;
+      const startedAt = Date.now();
+      const maxDurationMs = 12000;
       const timer = window.setInterval(() => {
+        const maxHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
         window.scrollBy(0, distance);
         totalHeight += distance;
+        steps += 1;
 
-        if (totalHeight >= maxHeight) {
+        if (totalHeight >= maxHeight || steps >= maxSteps || Date.now() - startedAt >= maxDurationMs) {
           window.clearInterval(timer);
           window.scrollTo(0, 0);
           resolve();
@@ -363,19 +370,27 @@ async function autoScroll(page: Page) {
 
 async function waitForFontsAndImages(page: Page) {
   await page.evaluate(`(async () => {
-    await document.fonts?.ready;
+    const timeout = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+    await Promise.race([
+      document.fonts?.ready ?? Promise.resolve(),
+      timeout(5000)
+    ]);
 
     const images = Array.from(document.images).filter((image) => !image.complete);
 
-    await Promise.all(
-      images.map(
-        (image) =>
-          new Promise((resolve) => {
-            image.addEventListener("load", () => resolve(), { once: true });
-            image.addEventListener("error", () => resolve(), { once: true });
-          })
-      )
-    );
+    await Promise.race([
+      Promise.all(
+        images.map(
+          (image) =>
+            new Promise((resolve) => {
+              image.addEventListener("load", () => resolve(), { once: true });
+              image.addEventListener("error", () => resolve(), { once: true });
+            })
+        )
+      ),
+      timeout(8000)
+    ]);
   })()`);
 }
 

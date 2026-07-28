@@ -1,4 +1,25 @@
-# SiberSnap
+<div align="center">
+
+# 📸 SiberSnap
+
+**API Node.js untuk tangkap screenshot halaman penuh & ekstrak teks dari halaman web.**
+
+Dibangun dengan TypeScript, Express, Puppeteer, Cheerio, dan Sharp. Scraping ringan dengan fallback otomatis ke browser headless untuk halaman dinamis/terproteksi.
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-green.svg)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Express](https://img.shields.io/badge/Express-server-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![Puppeteer](https://img.shields.io/badge/Puppeteer-headless-40B5A4?logo=puppeteer&logoColor=white)](https://pptr.dev/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#-berkontribusi)
+[![Status](https://img.shields.io/badge/status-aktif_maintained-success.svg)](#-status)
+[![Stars](https://img.shields.io/github/stars/candrapwr/sibersnap?style=social&label=Star)](https://github.com/candrapwr/sibersnap/stargazers)
+
+</div>
+
+---
+
+> 🌐 Bagian dari **Ekosistem Siber** — dibangun & dirawat oleh **dataSiberLab**.
 
 SiberSnap is a Node.js API for capturing full-page website screenshots and extracting text content from web pages. It is built with TypeScript, Express, Puppeteer, Cheerio, and Sharp.
 
@@ -283,8 +304,33 @@ Use SiberSnap only on websites you are authorized to access and scrape. Follow a
 
 ## License
 
-SiberSnap is licensed under the MIT License.
+SiberSnap is licensed under the **MIT License**. See [LICENSE](./LICENSE).
 
 Copyright (c) 2026 dataSiberLab
 
-Contact: candrapwr@datasiber.com
+---
+
+## 🤝 Berkontribusi
+
+Kontribusi diterima!
+
+1. Fork & clone repo
+2. `npm install && npm run dev`
+3. Buat perubahanmu, lalu buka PR
+
+Untuk perubahan besar, silakan buka [issue](https://github.com/candrapwr/sibersnap/issues) dulu untuk berdiskusi.
+
+---
+
+## 📬 Kontak & Komunitas
+
+<div align="center">
+
+**Dibuat dengan ❤️ oleh [dataSiberLab](https://datasiber.com)** sebagai bagian dari ekosistem Siber.
+
+📧 **Kontak:** [candrapwr@datasiber.com](mailto:candrapwr@datasiber.com)
+🌐 **Website:** [datasiber.com](https://datasiber.com)
+
+SiberSnap berguna? ⭐ Star repo-nya dan bagikan ke sesama builder!
+
+</div>

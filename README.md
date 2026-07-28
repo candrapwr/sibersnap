@@ -334,3 +334,5 @@ Untuk perubahan besar, silakan buka [issue](https://github.com/candrapwr/sibersn
 SiberSnap berguna? ⭐ Star repo-nya dan bagikan ke sesama builder!
 
 </div>
+
+<!-- repo: sibersnap · dataSiberLab · 2026 -->
